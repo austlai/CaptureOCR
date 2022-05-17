@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CaptureOCR.Models
+{
+    internal class Capture
+    {
+        private Region _region;
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public Capture()
+        {
+            _region = new Region();
+        }
+    }
+}
+
