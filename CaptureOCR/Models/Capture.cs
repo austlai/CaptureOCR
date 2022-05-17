@@ -11,8 +11,8 @@ namespace CaptureOCR.Models
 {
     internal class Capture
     {
-        public Region _captureRegion;
         public Bitmap _screen;
+
 
         public int ScreenWidth { get; private set; }
         public int ScreenHeight { get; private set; }
@@ -20,7 +20,6 @@ namespace CaptureOCR.Models
         public int ScreenTop { get; private set; }
         public Capture()
         {
-            _captureRegion = new Region(-1, -1, -1, -1);
 
             ScreenWidth = Convert.ToInt32(SystemParameters.VirtualScreenWidth);
             ScreenHeight = Convert.ToInt32(SystemParameters.VirtualScreenHeight);
@@ -36,7 +35,7 @@ namespace CaptureOCR.Models
                 
             g.CopyFromScreen(ScreenLeft, ScreenTop, 0, 0, _screen.Size);
                 
-            _screen.Save("C:\\Users\\Vincent\\Desktop\\TestImage.jpg", ImageFormat.Png);
+            //_screen.Save("C:\\Users\\Vincent\\Desktop\\TestImage.jpg", ImageFormat.Png);
         }
     }
 }
