@@ -23,7 +23,9 @@ namespace CaptureOCR
     {
 
         private Point startPoint;
+        private Point movePoint;
         private Rectangle? rect;
+        private bool rectSet;
         public MainWindow()
         {
             InitializeComponent();
@@ -35,43 +37,64 @@ namespace CaptureOCR
         }
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (rect != null)
-                canvas.Children.Remove(rect);
-
-            startPoint = e.GetPosition(canvas);
-
-            rect = new Rectangle
+            if (rectSet == true)
             {
-                Stroke = Brushes.LightBlue,
-                StrokeThickness = 2
-            };
-            Canvas.SetLeft(rect, startPoint.X);
-            Canvas.SetTop(rect, startPoint.Y);
-            canvas.Children.Add(rect);
+                return;
+            }
+            else
+            {
+                if (rect != null)
+                    canvas.Children.Remove(rect);
+
+                rect = new Rectangle
+                {
+                    Stroke = Brushes.LightBlue,
+                    StrokeThickness = 2
+                };
+                Canvas.SetLeft(rect, startPoint.X);
+                Canvas.SetTop(rect, startPoint.Y);
+                canvas.Children.Add(rect);
+                rectSet = false;
+            }
         }
 
         private void Canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Released || rect == null)
                 return;
+            if (e.LeftButton == MouseButtonState.Pressed && rectSet == true)
+            {
+                var pos = e.GetPosition(canvas);
+                var x = Math.Min(pos.X, movePoint.X);
+                var y = Math.Min(pos.Y, movePoint.Y);
+                Canvas.SetLeft(rect, x);
+                Canvas.SetTop(rect, y);
 
-            var pos = e.GetPosition(canvas);
+                
+                movePoint = e.GetPosition(canvas);
+            }
+            else
+            {
+                startPoint = e.GetPosition(canvas);
+                var pos = e.GetPosition(canvas);
 
-            var x = Math.Min(pos.X, startPoint.X);
-            var y = Math.Min(pos.Y, startPoint.Y);
+                var x = Math.Min(pos.X, movePoint.X);
+                var y = Math.Min(pos.Y, movePoint.Y);
 
-            var w = Math.Max(pos.X, startPoint.X) - x;
-            var h = Math.Max(pos.Y, startPoint.Y) - y;
+                var w = Math.Max(pos.X, movePoint.X) - x;
+                var h = Math.Max(pos.Y, movePoint.Y) - y;
 
-            rect.Width = w;
-            rect.Height = h;
+                rect.Width = w;
+                rect.Height = h;
 
-            Canvas.SetLeft(rect, x);
-            Canvas.SetTop(rect, y);
+                Canvas.SetLeft(rect, x);
+                Canvas.SetTop(rect, y);
+            }
         }
 
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            rectSet = true;
             //rect = null;
         }
     }
