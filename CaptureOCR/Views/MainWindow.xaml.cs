@@ -23,7 +23,6 @@ namespace CaptureOCR
     {
 
         private Point startPoint;
-        private Point movePoint;
         private Rectangle? rect;
         private bool rectSet;
         public MainWindow()
@@ -39,6 +38,7 @@ namespace CaptureOCR
         {
             if (rectSet == true)
             {
+                startPoint = e.GetPosition(canvas);
                 return;
             }
             else
@@ -46,10 +46,13 @@ namespace CaptureOCR
                 if (rect != null)
                     canvas.Children.Remove(rect);
 
+                startPoint = e.GetPosition(canvas);
+
                 rect = new Rectangle
                 {
                     Stroke = Brushes.LightBlue,
-                    StrokeThickness = 2
+                    StrokeThickness = 2,
+                    Fill = new SolidColorBrush(Color.FromArgb(0,255,0,132))
                 };
                 Canvas.SetLeft(rect, startPoint.X);
                 Canvas.SetTop(rect, startPoint.Y);
@@ -62,27 +65,40 @@ namespace CaptureOCR
         {
             if (e.LeftButton == MouseButtonState.Released || rect == null)
                 return;
-            if (e.LeftButton == MouseButtonState.Pressed && rectSet == true)
+            if (e.LeftButton == MouseButtonState.Pressed && rectSet == true && Mouse.DirectlyOver == canvas.Children[0])
             {
-                var pos = e.GetPosition(canvas);
-                var x = Math.Min(pos.X, movePoint.X);
-                var y = Math.Min(pos.Y, movePoint.Y);
-                Canvas.SetLeft(rect, x);
-                Canvas.SetTop(rect, y);
+                Rectangle ding = (Rectangle)Mouse.DirectlyOver;
+                ding.StrokeThickness = 20;
+                var mp = e.GetPosition(canvas);
+                double deltaX = mp.X - startPoint.X;
+                double deltaY = mp.Y - startPoint.Y;
 
-                
-                movePoint = e.GetPosition(canvas);
+                var newX = deltaX + Canvas.GetLeft(rect);
+                var newY = deltaY + Canvas.GetTop(rect);
+
+                if (newX < 0)
+                    newX = 0;
+                else if (newX + rect.ActualWidth > canvas.ActualWidth)
+                    newX = canvas.ActualWidth - rect.ActualWidth;
+
+                if (newY < 0)
+                    newY = 0;
+                else if (newY + rect.ActualHeight > canvas.ActualHeight)
+                    newY = canvas.ActualHeight - rect.ActualHeight;
+
+                Canvas.SetLeft(rect, newX);
+                Canvas.SetTop(rect, newY);
+                startPoint = e.GetPosition(canvas);
             }
             else
             {
-                startPoint = e.GetPosition(canvas);
                 var pos = e.GetPosition(canvas);
 
-                var x = Math.Min(pos.X, movePoint.X);
-                var y = Math.Min(pos.Y, movePoint.Y);
+                var x = Math.Min(pos.X, startPoint.X);
+                var y = Math.Min(pos.Y, startPoint.Y);
 
-                var w = Math.Max(pos.X, movePoint.X) - x;
-                var h = Math.Max(pos.Y, movePoint.Y) - y;
+                var w = Math.Max(pos.X, startPoint.X) - x;
+                var h = Math.Max(pos.Y, startPoint.Y) - y;
 
                 rect.Width = w;
                 rect.Height = h;
