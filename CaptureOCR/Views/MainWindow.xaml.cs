@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace CaptureOCR
 {
@@ -21,9 +21,58 @@ namespace CaptureOCR
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private Point startPoint;
+        private Rectangle? rect;
         public MainWindow()
         {
             InitializeComponent();
+
+            Width = SystemParameters.VirtualScreenWidth;
+            Height = SystemParameters.VirtualScreenHeight;
+            Left = SystemParameters.VirtualScreenLeft;
+            Top = SystemParameters.VirtualScreenTop;
+        }
+        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (rect != null)
+                canvas.Children.Remove(rect);
+
+            startPoint = e.GetPosition(canvas);
+
+            rect = new Rectangle
+            {
+                Stroke = Brushes.LightBlue,
+                StrokeThickness = 2
+            };
+            Canvas.SetLeft(rect, startPoint.X);
+            Canvas.SetTop(rect, startPoint.Y);
+            canvas.Children.Add(rect);
+        }
+
+        private void Canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Released || rect == null)
+                return;
+
+            var pos = e.GetPosition(canvas);
+
+            var x = Math.Min(pos.X, startPoint.X);
+            var y = Math.Min(pos.Y, startPoint.Y);
+
+            var w = Math.Max(pos.X, startPoint.X) - x;
+            var h = Math.Max(pos.Y, startPoint.Y) - y;
+
+            rect.Width = w;
+            rect.Height = h;
+
+            Canvas.SetLeft(rect, x);
+            Canvas.SetTop(rect, y);
+        }
+
+        private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            //rect = null;
         }
     }
 }

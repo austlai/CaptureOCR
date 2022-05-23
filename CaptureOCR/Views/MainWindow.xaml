@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CaptureOCR"
         mc:Ignorable="d"
-        Title="CaptureOCR" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="CaptureOCR"
+        WindowStyle="None"
+        ResizeMode="NoResize">
+    <Canvas x:Name="canvas" MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove" MouseUp="Canvas_MouseUp" Background="Transparent" />
 </Window>
