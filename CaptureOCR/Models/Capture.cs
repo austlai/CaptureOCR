@@ -35,7 +35,7 @@ namespace CaptureOCR.Models
                 
             g.CopyFromScreen(ScreenLeft, ScreenTop, 0, 0, _screen.Size);
                 
-            //_screen.Save("C:\\Users\\Vincent\\Desktop\\TestImage.jpg", ImageFormat.Png);
+            _screen.Save("C:\\Users\\Vincent\\Desktop\\TestImage.jpg", ImageFormat.Png);
         }
     }
 }

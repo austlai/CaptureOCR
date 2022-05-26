@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using CaptureOCR.Models;
+using CaptureOCR.ViewModels;
+using System.Diagnostics;
 
 namespace CaptureOCR
 {
@@ -16,11 +18,17 @@ namespace CaptureOCR
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            Capture test = new Capture();
+            Capture startupImg = new();
+            startupImg.GetScreen();
 
-            test.GetScreen();
+            MainWindow = new CaptureWindow()
+            {
+                DataContext = new CaptureViewModel()
+            };
+            MainWindow.Show();
 
             base.OnStartup(e);
+
         }
     }
 }

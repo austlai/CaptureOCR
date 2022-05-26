@@ -19,16 +19,20 @@ namespace CaptureOCR
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CaptureWindow : Window
     {
-
         private Point startPoint;
-        private Rectangle? rect;
+        private Rectangle rect;
         private bool rectSet;
-        public MainWindow()
+        public CaptureWindow()
         {
             InitializeComponent();
-
+            /*ImageBrush ib = new ImageBrush
+            {
+                ImageSource = new BitmapImage(new Uri(@"C:\Users\Vincent\Desktop\TestImage.jpg", UriKind.Relative))
+            };
+            canvas.Background = ib;*/
+            rect = (Rectangle)canvas.Children[0];
             Width = SystemParameters.VirtualScreenWidth;
             Height = SystemParameters.VirtualScreenHeight;
             Left = SystemParameters.VirtualScreenLeft;
@@ -36,7 +40,7 @@ namespace CaptureOCR
         }
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (rectSet == true)
+            if (rectSet == true && Mouse.DirectlyOver == rect)
             {
                 startPoint = e.GetPosition(canvas);
                 return;
@@ -48,12 +52,10 @@ namespace CaptureOCR
 
                 startPoint = e.GetPosition(canvas);
 
-                rect = new Rectangle
-                {
-                    Stroke = Brushes.LightBlue,
-                    StrokeThickness = 2,
-                    Fill = new SolidColorBrush(Color.FromArgb(0,255,0,132))
-                };
+                rect.Stroke = Brushes.LightBlue;
+                rect.StrokeThickness = 2;
+                rect.Fill = new SolidColorBrush(Color.FromArgb(0, 255, 0, 132));
+
                 Canvas.SetLeft(rect, startPoint.X);
                 Canvas.SetTop(rect, startPoint.Y);
                 canvas.Children.Add(rect);
@@ -63,9 +65,9 @@ namespace CaptureOCR
 
         private void Canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Released || rect == null)
+            if (e.LeftButton == MouseButtonState.Released)
                 return;
-            if (e.LeftButton == MouseButtonState.Pressed && rectSet == true && Mouse.DirectlyOver == canvas.Children[0])
+            if (e.LeftButton == MouseButtonState.Pressed && rectSet == true && Mouse.DirectlyOver == rect)
             {
                 Rectangle ding = (Rectangle)Mouse.DirectlyOver;
                 ding.StrokeThickness = 20;
@@ -111,7 +113,6 @@ namespace CaptureOCR
         private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             rectSet = true;
-            //rect = null;
         }
     }
 }
